@@ -1,0 +1,504 @@
+{% extends 'base.html' %}
+ {% load static from staticfiles %}
+
+{% block contenido %}
+{% if user.is_authenticated %}
+{% if user.rol_id == 1 %}
+<div class="wrap">
+    <div class="preview-page">
+        <div class="contact-form">
+            <h3>Reportes</h3>
+            </div>
+        </div>
+
+        <div class="formAdmin">
+            <h1>Reportes</h1>
+            <hr>
+            <p>
+                Los reportes detallan: los productos con mayor y menor número de ventas; los clientes con mayor frecuencia, y los clientes que han generado
+                mayor cantidad de ingresos.
+            </p>
+            <hr>
+             <a><input type="button" value="Productos más vendidos" id="productosMasVendidos"
+                       onclick="cambio('seccionReporte')"></a>
+            <a><input type="button" value="Productos menos vendidos" id="productosMenosVendidos"
+                    onclick="cambio('seccionReporte2')"></a>
+            <a><input type="button" value="Clientes frecuentes" id="clientesFrecuentes"
+                    onclick="cambio('seccionReporte3')"></a>
+            <a><input type="button" value="Clientes con mayor ingreso" id="clientesIngresos"
+                    onclick="cambio('seccionReporte4')"></a>
+            <div id="seccionReporte" style="position: relative;display:none">
+                <br>
+                <div class="formAdmin">
+                    <h2>Productos más vendidos</h2>
+                    <hr>
+                    <hr>
+                    <table style="width: 50%; float: left;">
+                        <tr style="width: 120px">
+                            <td>Mes</td>
+                            <td>Año</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <select style="min-width: 120px;" id="reporte1Mes">
+                                    <option value="1">Enero</option>
+                                    <option value="2">Febrero</option>
+                                    <option value="3">Marzo</option>
+                                    <option value="4">Abril</option>
+                                    <option value="5">Mayo</option>
+                                    <option value="6">Junio</option>
+                                    <option value="7">Julio</option>
+                                    <option value="8">Agosto</option>
+                                    <option value="9">Septiembre</option>
+                                    <option value="10">Octubre</option>
+                                    <option value="11">Noviembre</option>
+                                    <option value="12">Diciembre</option>
+                                </select>
+                            </td>
+                            <td>
+                                <input id="reporte1Anio" style="height: 40px; width: 80px;" type="number" value="2015" min="1000" max="9999">
+                            </td>
+                        </tr>
+                    </table>
+                    <input style="height: 50px; margin-top: 15px;" type="button" value="Ver Reporte" onclick="reporte1()">
+                    <div id="botonImprimirReporte1" style="position: relative;display:none"><br><hr><input style="height: 50px; margin-top: 15px;" type="button" value="Imprimir" onclick="imprimirReporte1()" ><hr></div>
+                    <hr>
+                    <div id="reporteProductosMasVendidos"></div>
+                    <div id="informacionReporte1"></div>
+
+
+                </div>
+            </div>
+
+            <div id="seccionReporte2" style="position: relative;display:none">
+                <br>
+                <div class="formAdmin">
+                    <h2>Productos menos vendidos</h2>
+                    <hr>
+                    <hr>
+                    <table style="width: 50%; float: left;">
+                        <tr style="width: 120px">
+                            <td>Mes</td>
+                            <td>Año</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <select style="min-width: 120px;" id="reporte2Mes">
+                                    <option value="1">Enero</option>
+                                    <option value="2">Febrero</option>
+                                    <option value="3">Marzo</option>
+                                    <option value="4">Abril</option>
+                                    <option value="5">Mayo</option>
+                                    <option value="6">Junio</option>
+                                    <option value="7">Julio</option>
+                                    <option value="8">Agosto</option>
+                                    <option value="9">Septiembre</option>
+                                    <option value="10">Octubre</option>
+                                    <option value="11">Noviembre</option>
+                                    <option value="12">Diciembre</option>
+                                </select>
+                            </td>
+                            <td>
+                                <input id="reporte2Anio" style="height: 40px; width: 80px;" type="number" value="2015" min="1000" max="9999">
+                            </td>
+                        </tr>
+                    </table>
+                    <input style="height: 50px; margin-top: 15px;" type="button" value="Ver Reporte" onclick="reporte2()">
+                    <div id="botonImprimirReporte2" style="position: relative;display:none"><br><hr>
+                        <input style="height: 50px; margin-top: 15px;" type="button" value="Imprimir" onclick="imprimirReporte2()" ><hr>
+                    </div>
+                    <hr>
+                    <div id="reporteProductosMenosVendidos"></div>
+                    <div id="informacionReporte2"></div>
+
+
+                </div>
+            </div>
+
+            <div id="seccionReporte3" style="position: relative;display:none">
+                <br>
+                <div class="formAdmin">
+                    <h2>Clientes con mayor Frecuencia</h2>
+                    <hr>
+                    <hr>
+                    <table style="width: 50%; float: left;">
+                        <tr style="width: 120px">
+                            <td>Mes</td>
+                            <td>Año</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <select style="min-width: 120px;" id="reporte3Mes">
+                                    <option value="1">Enero</option>
+                                    <option value="2">Febrero</option>
+                                    <option value="3">Marzo</option>
+                                    <option value="4">Abril</option>
+                                    <option value="5">Mayo</option>
+                                    <option value="6">Junio</option>
+                                    <option value="7">Julio</option>
+                                    <option value="8">Agosto</option>
+                                    <option value="9">Septiembre</option>
+                                    <option value="10">Octubre</option>
+                                    <option value="11">Noviembre</option>
+                                    <option value="12">Diciembre</option>
+                                </select>
+                            </td>
+                            <td>
+                                <input id="reporte3Anio" style="height: 40px; width: 80px;" type="number" value="2015" min="1000" max="9999">
+                            </td>
+                        </tr>
+                    </table>
+                    <input style="height: 50px; margin-top: 15px;" type="button" value="Ver Reporte" onclick="reporte3()">
+                    <div id="botonImprimirReporte3" style="position: relative;display:none"><br><hr>
+                        <input style="height: 50px; margin-top: 15px;" type="button" value="Imprimir" onclick="imprimirReporte3()" ><hr>
+                    </div>
+                    <hr>
+                    <div id="reporteClientesMasFrecuentes"></div>
+                    <div id="informacionReporte3"></div>
+
+                </div>
+            </div>
+
+            <div id="seccionReporte4" style="position: relative;display:none">
+                <br>
+                <div class="formAdmin">
+                    <h2>Clientes que han generado mayores ingresos</h2>
+                    <hr>
+                    <hr>
+                    <table style="width: 50%; float: left;">
+                        <tr style="width: 120px">
+                            <td>Mes</td>
+                            <td>Año</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <select style="min-width: 120px;" id="reporte4Mes">
+                                    <option value="1">Enero</option>
+                                    <option value="2">Febrero</option>
+                                    <option value="3">Marzo</option>
+                                    <option value="4">Abril</option>
+                                    <option value="5">Mayo</option>
+                                    <option value="6">Junio</option>
+                                    <option value="7">Julio</option>
+                                    <option value="8">Agosto</option>
+                                    <option value="9">Septiembre</option>
+                                    <option value="10">Octubre</option>
+                                    <option value="11">Noviembre</option>
+                                    <option value="12">Diciembre</option>
+                                </select>
+                            </td>
+                            <td>
+                                <input id="reporte4Anio" style="height: 40px; width: 80px;" type="number" value="2015" min="1000" max="9999">
+                            </td>
+                        </tr>
+                    </table>
+                    <input style="height: 50px; margin-top: 15px;" type="button" value="Ver Reporte" onclick="reporte4()">
+                    <div id="botonImprimirReporte4" style="position: relative;display:none"><br><hr>
+                        <input style="height: 50px; margin-top: 15px;" type="button" value="Imprimir" onclick="imprimirReporte4()" ><hr>
+                    </div>
+                    <hr>
+                    <div id="reporteClientesMayorIngreso"></div>
+                    <div id="informacionReporte4"></div>
+
+                </div>
+            </div>
+
+        </div>
+
+
+        <script LANGUAGE="javascript">
+
+            function abrirCanvas(){
+                var myLineChart = new Chart(document.getElementById("canvas").getContext("2d")).Line(LineChart,
+                        {scaleFontSize : 13, scaleFontColor : "#ffa45e"});
+                var LineChart = {
+                     labels: ["Ruby", "jQuery", "Java", "ASP.Net", "PHP"],
+                     datasets: [{
+                     fillColor: "rgba(151,249,190,0.5)",
+                     strokeColor: "rgba(255,255,255,1)",
+                     pointColor: "rgba(220,220,220,1)",
+                     pointStrokeColor: "#fff",
+                     data: [10, 20, 30, 40, 50]
+                     }, {
+                     fillColor: "rgba(252,147,65,0.5)",
+                     strokeColor: "rgba(255,255,255,1)",
+                     pointColor: "rgba(173,173,173,1)",
+                     pointStrokeColor: "#fff",
+                     data: [28, 68, 40, 19, 96]
+                     }]
+                }
+
+            }
+
+            function cambio(idcapa){
+                document.getElementById(idcapa).style.display=document.getElementById(idcapa).style.display==''?'none':'';
+               window.location='#'+idcapa;
+
+            }
+
+            function reporte1(){
+                var ano = $('#reporte1Anio').val();
+                var mes = $('#reporte1Mes').val();
+                $.ajax({
+                    url: '/reportes/reporte1/',
+                    dataType:'json',
+                    data: {
+                        'ano':ano,
+                        'mes':mes
+                    },
+                    type: 'GET'
+
+                })
+                .done(function (data){
+                   if(data.length>0) {
+                       var html = '<canvas id="canvas" style="width: 100%; height: 400px;" ></canvas>'
+                       var cadenaLabel = [];
+                       var cantidades = [];
+                       var htmlDetalle = '<table class="sortable" style="width: 100%;" ><tr bgcolor="#5f9ea0" style="cursor: pointer;"> <td style="width: 10%;">CODIGO</td>' +
+                                '<td style="width: 25%;">NOMBRE</td><td style="width: 25%;">CATEGORIA</td><td style="width: 20%;">' +
+                                'Nº VENTAS</td></tr>'
+                       for (var i = 0; i < data.length; i++) {
+                           cadenaLabel[i] = data[i].nombre
+                           cantidades[i] = data[i].cantidad
+                            htmlDetalle += ' <tr bgcolor="#00ffff"><td>' + data[i].codigo + '</td><td>' + data[i].nombre + '</td>' +
+                            '<td>' + data[i].categoria + '</td><td>' + data[i].cantidad + '</td></tr>'
+                       }
+                       htmlDetalle += '</table>'
+                       $('#reporteProductosMasVendidos').html(html);
+                       $('#informacionReporte1').html(htmlDetalle);
+
+                       var LineChart = {
+                           labels: cadenaLabel,
+                           datasets: [{
+                               fillColor: "rgba(252,147,65,0.5)",
+                               strokeColor: "rgba(255,255,255,1)",
+                               pointColor: "rgba(173,173,173,1)",
+                               pointStrokeColor: "#fff",
+                               data: cantidades
+                           }]
+                       }
+
+                       var myLineChart = new Chart(document.getElementById("canvas").getContext("2d")).Line(LineChart,
+                               {scaleFontSize: 13, scaleFontColor: "#ffa45e"});
+                         document.getElementById('botonImprimirReporte1').style.display='';
+                   }else{
+                       $('#reporteProductosMasVendidos').html('<p style="font-size: 20px;">No hay datos para mostrar</p>');
+                        $('#informacionReporte1').html('');
+                       document.getElementById('botonImprimirReporte1').style.display='none';
+                   }
+                 })
+                .fail(function (jqXHR, textStatus, errorThrown) {
+                    $('#reporteProductosMasVendidos').html(errorThrown);
+                 });
+
+            }
+
+            function imprimirReporte1(){
+                var ano = $('#reporte1Anio').val();
+                var mes = $('#reporte1Mes').val();
+                $.ajax({
+                    url: '/reportes/reporte1/',
+                    dataType:'json',
+                    data: {
+                        'ano':ano,
+                        'mes':mes
+                    },
+                    type: 'GET'
+
+                })
+                .done(function (data){
+
+                });
+            }
+
+            function reporte2(){
+                var ano = $('#reporte2Anio').val();
+                var mes = $('#reporte2Mes').val();
+                $.ajax({
+                    url: '/reportes/reporte2/',
+                    dataType:'json',
+                    data: {
+                        'ano':ano,
+                        'mes':mes
+                    },
+                    type: 'GET'
+
+                })
+                .done(function (data){
+
+                    if(data.length>0){
+                    var html = '<canvas id="canvas2" style="width: 100%; height: 400px;" ></canvas>'
+                    var cadenaLabel = [];
+                    var cantidades = [];
+
+                   var htmlDetalle = '<table class="sortable" style="width: 100%;" ><tr bgcolor="#5f9ea0" style="cursor: pointer;"> <td style="width: 10%;">CODIGO</td>' +
+                                '<td style="width: 25%;">NOMBRE</td><td style="width: 25%;">CATEGORIA</td><td style="width: 20%;">' +
+                                'Nº VENTAS</td></tr>'
+
+                    for (var i=0; i<data.length; i++){
+                        cadenaLabel[i]=data[i].nombre
+                        cantidades[i]=data[i].cantidad
+                        htmlDetalle += ' <tr bgcolor="#00ffff"><td>' + data[i].codigo + '</td><td>' + data[i].nombre + '</td>' +
+                            '<td>' + data[i].categoria + '</td><td>' + data[i].cantidad + '</td></tr>'
+                    }
+                        htmlDetalle += '</table>'
+                    $('#reporteProductosMenosVendidos').html(html);
+                        $('#informacionReporte2').html(htmlDetalle);
+
+                         var LineChart = {
+                         labels: cadenaLabel,
+                         datasets: [{
+                             fillColor: "rgba(252,147,65,0.5)",
+                             strokeColor: "rgba(255,255,255,1)",
+                             pointColor: "rgba(173,173,173,1)",
+                             pointStrokeColor: "#fff",
+                             data: cantidades
+                        }]
+                    }
+
+                     var myLineChart = new Chart(document.getElementById("canvas2").getContext("2d")).Line(LineChart,
+                        {scaleFontSize : 13, scaleFontColor : "#ffa45e"});
+                     document.getElementById('botonImprimirReporte2').style.display='';
+
+                  }else{
+                        $('#reporteProductosMenosVendidos').html('<p style="font-size: 20px;">No hay datos para mostrar</p>');
+                        $('#informacionReporte2').html('');
+                       document.getElementById('botonImprimirReporte2').style.display='none';
+                    }
+
+                 })
+                .fail(function (jqXHR, textStatus, errorThrown) {
+                    $('#reporteProductosMenosVendidos').html(errorThrown);
+                 });
+
+            }
+
+
+            function reporte3(){
+                var ano = $('#reporte3Anio').val();
+                var mes = $('#reporte3Mes').val();
+                $.ajax({
+                    url: '/reportes/reporte3/',
+                    dataType:'json',
+                    data: {
+                        'ano':ano,
+                        'mes':mes
+                    },
+                    type: 'GET'
+
+                })
+                .done(function (data){
+
+                    if(data.length>0) {
+
+
+                        var html = '<canvas id="canvas3" style="width: 100%; height: 400px;" ></canvas>'
+                        var cadenaLabel = [];
+                        var cantidades = [];
+                        var htmlDetalle = '<table class="sortable" style="width: 100%;" ><tr bgcolor="#5f9ea0" style="cursor: pointer;"> <td style="width: 10%;">Nº CEDULA</td>' +
+                                '<td style="width: 25%;">APELLIDOS</td><td style="width: 25%;">NOMBRES</td><td style="width: 20%;">' +
+                                'Nº PEDIDOS</td></tr>'
+
+                        for (var i = 0; i < data.length; i++) {
+                            cadenaLabel[i] = data[i].cedula
+                            cantidades[i] = data[i].cantidad
+                            htmlDetalle += ' <tr bgcolor="#00ffff"><td>' + data[i].cedula + '</td><td>' + data[i].apellidos + '</td>' +
+                            '<td>' + data[i].nombres + '</td><td>' + data[i].cantidad + '</td></tr>'
+                        }
+                        htmlDetalle += '</table>'
+                        $('#reporteClientesMasFrecuentes').html(html);
+                        $('#informacionReporte3').html(htmlDetalle);
+
+                        var LineChart = {
+                            labels: cadenaLabel,
+                            datasets: [{
+                                fillColor: "rgba(252,147,65,0.5)",
+                                strokeColor: "rgba(255,255,255,1)",
+                                pointColor: "rgba(173,173,173,1)",
+                                pointStrokeColor: "#fff",
+                                data: cantidades
+                            }]
+                        }
+
+                        var myLineChart = new Chart(document.getElementById("canvas3").getContext("2d")).Line(LineChart,
+                                {scaleFontSize: 13, scaleFontColor: "#ffa45e"});
+                        document.getElementById('botonImprimirReporte3').style.display='';
+                    }else{
+                        $('#reporteClientesMasFrecuentes').html('<p style="font-size: 20px;">No hay datos para mostrar</p>');
+                        $('#informacionReporte3').html('');
+                        document.getElementById('botonImprimirReporte3').style.display='none';
+                    }
+                 })
+                .fail(function (jqXHR, textStatus, errorThrown) {
+                    $('#reporteClientesMasFrecuentes').html(errorThrown);
+                 });
+
+            }
+
+            function reporte4(){
+                var ano = $('#reporte4Anio').val();
+                var mes = $('#reporte4Mes').val();
+                $.ajax({
+                    url: '/reportes/reporte4/',
+                    dataType:'json',
+                    data: {
+                        'ano':ano,
+                        'mes':mes
+                    },
+                    type: 'GET'
+
+                })
+                .done(function (data){
+
+                    if(data.length>0) {
+
+
+                        var html = '<canvas id="canvas4" style="width: 100%; height: 400px;" ></canvas>'
+                        var cadenaLabel = [];
+                        var cantidades = [];
+                        var htmlDetalle = '<table class="sortable" style="width: 100%;" ><tr bgcolor="#5f9ea0" style="cursor: pointer;"> <td style="width: 10%;">Nº CEDULA</td>' +
+                                '<td style="width: 25%;">APELLIDOS</td><td style="width: 25%;">NOMBRES</td><td style="width: 20%;">' +
+                                'VALOR GENERADO</td></tr>'
+
+                        for (var i = 0; i < data.length; i++) {
+                            cadenaLabel[i] = data[i].cedula
+                            cantidades[i] = data[i].cantidad
+                            htmlDetalle += ' <tr bgcolor="#00ffff"><td>' + data[i].cedula + '</td><td>' + data[i].apellidos + '</td>' +
+                            '<td>' + data[i].nombres + '</td><td align="right">$' + data[i].cantidad + '</td></tr>'
+                        }
+                        htmlDetalle += '</table>'
+                        $('#reporteClientesMayorIngreso').html(html);
+                        $('#informacionReporte4').html(htmlDetalle);
+
+                        var LineChart = {
+                            labels: cadenaLabel,
+                            datasets: [{
+                                fillColor: "rgba(252,147,65,0.5)",
+                                strokeColor: "rgba(255,255,255,1)",
+                                pointColor: "rgba(173,173,173,1)",
+                                pointStrokeColor: "#fff",
+                                data: cantidades
+                            }]
+                        }
+
+                        var myLineChart = new Chart(document.getElementById("canvas4").getContext("2d")).Line(LineChart,
+                                {scaleFontSize: 13, scaleFontColor: "#ffa45e"});
+                        document.getElementById('botonImprimirReporte4').style.display='';
+                    }else{
+                        $('#reporteClientesMayorIngreso').html('<p style="font-size: 20px;">No hay datos para mostrar</p>');
+                        $('#informacionReporte4').html('');
+                        document.getElementById('botonImprimirReporte4').style.display='none';
+                    }
+                 })
+                .fail(function (jqXHR, textStatus, errorThrown) {
+                    $('#reporteClientesMayorIngreso').html(errorThrown);
+                 });
+
+            }
+
+        </script>
+    </div>
+</div>
+{% endif %}
+{% endif %}
+{% endblock %}

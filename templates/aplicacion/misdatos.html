@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+
+{% block contenido %}
+<div class="wrap">
+    <div class="preview-page">
+        <div class="contact-form">
+            <h3>Datos Personales</h3>
+            </div>
+        </div>
+    {% if user.is_authenticated %}
+          <div class="formOtro">
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+        	<div>
+        		<ul>
+                    <li><h2>MIS DATOS</h2></li>
+                    <hr>
+                    <li>{{formActualizar.cedula.label}}</li>
+                    <li>{{formActualizar.cedula.errors}}</li>
+                    <li>
+                        <input id="id_cedula" maxlength="10" name="cedula" onkeypress="return solonumeros(event)"
+                               placeholder="Cédula de Identidad" required="" type="text" disabled="" value="{{user.cedula}}">
+                    </li>
+                    <li>{{formActualizar.nombres.label}}</li>
+                    <li>{{formActualizar.nombres.errors}}</li>
+                    <li>{{formActualizar.nombres}}</li>
+                    <li>{{formActualizar.apellidos.label}}</li>
+                    <li>{{formActualizar.apellidos.errors}}</li>
+                    <li>{{formActualizar.apellidos}}</li>
+                    <li>{{formActualizar.username.label}}</li>
+                    <li>{{formActualizar.username.errors}}</li>
+                    <li>{{formActualizar.username}}</li>
+                    <li>{{formActualizar.telefono.label}}</li>
+                    <li>{{formActualizar.telefono.errors}}</li>
+                    <li>{{formActualizar.telefono}}</li>
+                    <li>{{formActualizar.fecha_nac.label}}</li>
+                    <li>{{formActualizar.fecha_nac.errors}}</li>
+                    <li>{{formActualizar.fecha_nac}}</li>
+                    <li>{{formActualizar.ciudad.label}}</li>
+                    <li>{{formActualizar.ciudad.errors}}</li>
+                    <li>{{formActualizar.ciudad}}</li>
+                    <li><label>Provincia:</label></li>
+                    <li><input type="text" disabled value="{{nombreProvincia}}" id="id_provincia"></li>
+                </ul>
+
+                <p>
+                    <hr>
+                    <div align="center"><input type="button" name="botonActualizar" onclick="editarMisDatos()" value="Guardar Cambios"/> </div>
+                </p>
+          	</div>
+            <hr>
+              <hr>
+      	</form>
+
+              <form method="POST">
+
+                  <div>
+                      <ul>
+                          <li><h2>Cambiar Contraseña</h2></li>
+                          <hr>
+                          <li><label>Contraseña Actual:</label></li>
+                          <li><input id="contraAc" type="password" placeholder="Contraseña Actual"></li>
+                          <li><label>Nueva Contraseña:</label></li>
+                          <li><input id="contraNu" type="password" placeholder="Nueva Contraseña"></li>
+                          <li><label>Confirmar Contraseña:</label></li>
+                          <li><input id="contraCo" type="password" placeholder="Confirmar Contraseña"></li>
+                      </ul>
+                      <p>
+                        <hr>
+                        <div align="center"><input type="button" name="botonCambiarContrasena" onclick="editarPassword()"
+                                                   value="Cambiar Contraseña"/> </div>
+                      </p>
+                  </div>
+              </form>
+          </div>
+    <div id="mostrarMensajeMisDatos"></div>
+     <script>
+            $('#id_ciudad').change(function(){
+                var ciu = $(this).val();
+
+                $.ajax({
+                    url: '/usuario/provincia/',
+                    dataType: 'json',
+                    data: {'ciudad_id':ciu},
+                    type: 'GET'
+                })
+                .done(function (data){
+
+                     var html = data.nombre
+                     $('#id_provincia').val(html);
+
+                })
+
+                .fail(function(jqXHR, textStatus, errorThrown){
+                            $('#id_provincia').val('');
+                 });
+
+            });
+
+          function editarMisDatos(){
+                var nombres = $('#id_nombres').val();
+                var apellidos = $('#id_apellidos').val();
+                var fecha_nac = $('#id_fecha_nac').val();
+                var ciudad = $('#id_ciudad').val();
+                var telefono = $('#id_telefono').val();
+                var correo = $('#id_username').val();
+
+                $.ajax({
+                    url: '/misdatos_ajax/',
+                    dataType: 'json',
+                    data: {'nombres':nombres,'apellidos':apellidos,'fecha_nac':fecha_nac,'ciudad':ciudad,'telefono':telefono,'username':correo},
+                    type: 'GET'
+                })
+                .done(function (data){
+                    var htmlSeccion = ''
+                    htmlSeccion = '<div class="ventana_flotante_mensaje">'+data.respuesta+'</div>'
+
+                            if(data.co==true){
+                                htmlSeccion = '<div class="ventana_flotante_mensaje">Este correo ya está registrado</div>'
+                                $('#mostrarMensajeMisDatos').html(htmlSeccion);
+                                $('#mostrarMensajeMisDatos').show();
+                                setTimeout("$('#mostrarMensajeMisDatos').hide();", 2000);
+                            }else{
+                                $('#mostrarMensajeMisDatos').html(htmlSeccion);
+                                $('#mostrarMensajeMisDatos').show();
+                                setTimeout("$('#mostrarMensajeMisDatos').hide();", 2000);
+                                setTimeout("location.reload()", 2000);
+                            }
+
+
+
+                })
+
+                .fail(function(jqXHR, textStatus, errorThrown){
+                 });
+
+            }
+
+            function editarPassword(){
+                var contraAc = $('#contraAc').val();
+                var contraNu = $('#contraNu').val();
+                var contraCo = $('#contraCo').val();
+
+                $.ajax({
+                    url: '/misdatos_contra_ajax/',
+                    dataType: 'json',
+                    data: {'contraAc':contraAc,'contraNu':contraNu,'contraCo':contraCo},
+                    type: 'GET'
+                })
+                .done(function (data){
+                    var htmlSeccion = ''
+                    htmlSeccion = '<div class="ventana_flotante_mensaje">'+data.respuesta+'</div>'
+                    $('#mostrarMensajeMisDatos').html(htmlSeccion);
+                        $('#mostrarMensajeMisDatos').show();
+                        setTimeout("$('#mostrarMensajeMisDatos').hide();", 2000);
+                    if(data.valido==true){
+                        setTimeout("window.location.href = '/'", 2000);
+                    }
+
+
+
+                })
+
+                .fail(function(jqXHR, textStatus, errorThrown){
+                 });
+
+            }
+        </script>
+    {% endif %}
+    </div>
+</div>
+{% endblock %}

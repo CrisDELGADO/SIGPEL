@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+{% block contenido%}
+
+    {% if user.is_authenticated %}
+    {% if not user.rol_id == 2 %}
+     <div class="wrap">
+         <div class="preview-page">
+             <div class="contact-form">
+                 <h3>Sección de Administración</h3>
+             </div>
+            <div class="formAdmin">
+                <h1>Categorías</h1>
+                <hr>
+                <p>
+                    En esta sección se podrá: añadir, editar, eliminar Categorías.
+                </p>
+                <hr>
+                <a><input type="button" value="Añadir" id="anadirCategoria" onclick="cambio('seccionFormularioAdminCategoria')"></a>
+                <a><input type="button" value="Editar" id="editarCategoria"></a>
+                <a><input type="button" value="Eliminar" id="eliminarCategoria"></a>
+                <div id="seccionFormularioAdminCategoria" style="position: relative;display:none">
+                    <br>
+                    <div class="formAdmin">
+                        <h2>Añadir Categoría</h2>
+                        <hr>
+                        <form method="post">
+                            {% csrf_token %}
+                            <div>
+                                <ul>
+                                    <li> {{ formCategoria }} </li>
+                                </ul>
+                                <hr>
+                                 <p><div align="center">
+                                     <input type="submit" name="botonAgregarCategoria" value="Agregar">
+                                 </div></p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+             <br>
+            <div class="formAdmin">
+                <h1>Productos</h1>
+                <hr>
+                <p>
+                    En esta sección se podrá: añadir, editar, eliminar Productos.
+                </p>
+                <hr>
+                <a><input type="button" value="Añadir"></a>
+                <a><input type="button" value="Editar"></a>
+                <a><input type="button" value="Eliminar"></a>
+                <div id="seccionFormularioAdminProducto">
+                    <br>
+                    <div class="formAdmin">
+                        <h2>Añadir Producto</h2>
+                        <hr>
+                        <form method="post"  enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div>
+                                <ul>
+                                    <li> {{ formProducto }} </li>
+                                </ul>
+                                <hr>
+                                 <p><div align="center">
+                                     <input type="submit" name="botonAgregarProducto" value="Agregar">
+                                 </div></p>
+                            </div>
+                        </form>
+                    </div>
+                    <br>
+                    <div class="formAdmin">
+                        <h2>Añadir Imagen Producto</h2>
+                        <hr>
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div>
+                                <ul>
+                                    <li> {{ formFoto }} </li>
+                                </ul>
+                                <hr>
+                                 <p><div align="center">
+                                     <input type="submit" name="botonAgregarImagenProducto" value="Agregar">
+                                 </div></p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+             {% if user.rol_id == 1 %}
+                <br>
+                <div class="formAdmin">
+                    <h1>Usuarios</h1>
+                    <hr>
+                    <p>
+                        En esta sección se podrá: cambiar el estado (ACTIVO - INACTIVO) de Usuarios.
+                    </p>
+                    <hr>
+                    <a><input type="button" value="Editar"></a>
+                    <div id="seccionFormularioAdminUsuario">
+
+                    </div>
+                </div>
+             {% endif %}
+         </div>
+     </div>
+    <!--
+    <script>
+        $('#anadirCategoria').on('click', function e(){
+            codigoHtml = '<br><div class="formAdmin"><h2>Añadir Categoría</h2><hr><form onsubmit="return false;" method="post">' +
+            '<div><ul><li> {{ formCategoria.nombre.label }} </li><li> {{ formCategoria.nombre }} </li>' +
+            '<li> {{ formCategoria.descripcion.label }} </li><li> {{ formCategoria.descripcion }} </li></ul><p><hr>' +
+            '<div align="center"><input type="submit" name="botonAgregarCategoria" value="Agregar">' +
+            '</div> </p></div></form></div>'
+
+            $('#seccionFormularioAdminCategoria').html(codigoHtml);
+        });
+    </script>
+    -->
+
+
+    <script LANGUAGE="javascript">
+        function cambio(idcapa){
+            document.getElementById(idcapa).style.display=document.getElementById(idcapa).style.display==''?'none':'';
+        }
+
+    </script>
+    {% endif %}
+    {% endif %}
+
+{% endblock %}

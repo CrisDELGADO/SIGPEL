@@ -1,0 +1,97 @@
+{% extends 'aplicacion/productos.html' %}
+
+{% block listaCategoriaDefault %}
+<div class="content-bottom-right">
+    <h3 id="nombreCategoria">{{categoriaEs.nombre}}</h3>
+    <input type="hidden" id="codigoCategoria" value="{{categoriaEs.id}}">
+    <div>
+        <select style="min-width: 200px; width: 30%; height: 30px;" id="selectFiltradoProductos">
+            <option value="1">Desde los más viejos</option>
+            <option value="2">Desde los más nuevos</option>
+            <option value="3">Desde los más caros</option>
+            <option value="4">Desde los más baratos</option>
+        </select>
+        <input style="width: 40%;height: 24px;min-width: 200px;" type="text" placeholder="Producto" id="campoNombreProducto" >
+    </div>
+    <div class="section group" id="listaProductosCategoria">
+                        {% for proEs in productosEs %}
+                            <div class="grid_1_of_4 images_1_of_4">
+                                <h4><a href="">{{proEs.nombre}}</a></h4>
+                                <a href=""><img style="height: 100px;" src="/media/{{proEs.imagen}}"/></a>
+                                <div class="price-details">
+                                    <div class="price-number">
+                                        <p><span class="rupees">${{proEs.precio}}</span></p>
+                                    </div>
+                                    <div class="add-cart">
+                                        <h4><a href="/productos/detalle/{{proEs.id}}/#contenidoPrincipal">Ver</a></h4>
+                                    </div>
+                                    <div class="clear"></div>
+                                </div>
+                            </div>
+                        {% endfor %}
+    </div>
+
+    <script>
+            $('#selectFiltradoProductos').change(function(){
+                var categoria = $('#codigoCategoria').val();
+                var filtrado = $(this).val();
+                $('#campoNombreProducto').val('');
+                var producto =  $('#campoNombreProducto').val();
+                 $.ajax({
+                    url: '/productos/filtrar/',
+                    dataType: 'json',
+                    data: {'idCategoria':categoria,'filtrado':filtrado,'productoBuscar':producto},
+                    type: 'GET'
+                })
+                .done(function (data){
+                                        var htmlSeccion = ''
+                                       for (var i=0; i<data.length; i++){
+                                           htmlSeccion += '<div class="grid_1_of_4 images_1_of_4"><h4><a href="">'+data[i].nombre+
+                                           '</a></h4><a href=""><img style="height: 100px;" src="/media/'+data[i].imagen+'"/></a><div class="price-details">' +
+                                           '<div class="price-number"><p><span class="rupees">$'+data[i].precio+
+                                           '</span></p></div><div class="add-cart"><h4><a href="/productos/detalle/'+data[i].id+'/#contenidoPrincipal'+
+                                           '">Ver</a></h4></div>' +
+                                           '<div class="clear"></div></div></div>'
+
+
+                                       }
+
+                                       $('#listaProductosCategoria').html(htmlSeccion);
+
+                });
+            });
+
+            $('#campoNombreProducto').on('keyup',function(){
+                var producto = $(this).val();
+                var categoria = $('#codigoCategoria').val();
+                var filtrado = $('#selectFiltradoProductos').val();
+                $.ajax({
+                    url: '/productos/filtrar/',
+                    dataType: 'json',
+                    data: {'idCategoria':categoria,'filtrado':filtrado,'productoBuscar':producto},
+                    type: 'GET'
+                })
+                .done(function (data){
+                            var htmlSeccion = ''
+                            for (var i=0; i<data.length; i++){
+                                htmlSeccion += '<div class="grid_1_of_4 images_1_of_4"><h4><a href="">'+data[i].nombre+
+                                '</a></h4><a href=""><img style="height: 100px;" src="/media/'+data[i].imagen+'"/></a><div class="price-details">' +
+                                '<div class="price-number"><p><span class="rupees">$'+data[i].precio+
+                                '</span></p></div><div class="add-cart"><h4><a href="/productos/detalle/'+data[i].id+'/#contenidoPrincipal'+
+                                '">Ver</a></h4></div>' +
+                                '<div class="clear"></div></div></div>'
+
+
+                            }
+
+                            $('#listaProductosCategoria').html(htmlSeccion);
+
+                });
+
+            });
+
+
+        </script>
+
+</div>
+{% endblock %}

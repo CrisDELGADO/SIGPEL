@@ -1,0 +1,217 @@
+{% extends 'base.html' %}
+
+{% block contenido%}
+
+    {% if user.is_authenticated %}
+    {% if not user.rol_id == 2 %}
+     <div class="wrap">
+         <div class="preview-page">
+             <div class="contact-form">
+                 <h3>Sección de Administración - Categorías</h3>
+             </div>
+            <div class="formAdmin">
+                <h1>Categorías</h1>
+                <hr>
+                <p>
+                    En esta sección se podrá: añadir, editar, eliminar Categorías.
+                </p>
+                <hr>
+                <a><input type="button" value="Añadir" id="anadirCategoria" onclick="cambio('seccionAgregarCategoria')"></a>
+                <a><input type="button" value="Editar" id="editarCategoria" onclick="cambio('seccionEditarCategoria')"></a>
+                <a><input type="button" value="Eliminar" id="eliminarCategoria" onclick="cambio('seccionEliminarCategoria')"></a>
+                <div id="seccionAgregarCategoria" style="position: relative;display:none">
+                    <br>
+                    <div class="formAdmin">
+                        <h2>Añadir Categoría</h2>
+                        <hr>
+                        <form method="post">
+                            {% csrf_token %}
+                            <div>
+                                <ul>
+                                    <li> {{ formCategoria }} </li>
+                                </ul>
+                                <hr>
+                                 <p><div align="center">
+                                     <input type="button" name="botonAgregarCategoria" value="Agregar" onclick="agregarCategoria()">
+                                 </div></p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div id="seccionEditarCategoria" style="position: relative;display:none">
+                    <br>
+                    <div class="formAdmin">
+                        <h2>Editar Categoría</h2>
+                        <hr>
+                        <select id="categoria_editar">
+                            <option value>-----</option>
+                            {% for listaCate in listaCategoriasAdmin %}
+                            <option value="{{listaCate.id}}">{{listaCate.nombre}}</option>
+                            {% endfor %}
+                        </select>
+                        <form method="post">
+                            {% csrf_token %}
+                            <div>
+                                <ul>
+                                    <li><label>Nombre:</label></li>
+                                    <li><input type="text" placeholder="Nombre" id="id_nombre2"></li>
+                                    <li><label>Descripción:</label></li>
+                                    <li><input type="text" placeholder="Descripcion" id="id_descripcion2"></li>
+                                </ul>
+                                <hr>
+                                 <p><div align="center">
+                                     <input type="button" name="botonEditarCategoria" value="Guardar Cambios" onclick="editarCategoria()">
+                                 </div></p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div id="seccionEliminarCategoria" style="position: relative;display:none">
+                    <br>
+                    <div class="formAdmin">
+                        <h2>Eliminar Categoría</h2>
+                        <hr>
+                        <select id="categoria_eliminar">
+                            <option value>-----</option>
+                            {% for listaCate in listaCategoriasAdmin %}
+                            <option value="{{listaCate.id}}">{{listaCate.nombre}}</option>
+                            {% endfor %}
+                        </select>
+                        <form method="post">
+                            {% csrf_token %}
+                            <div>
+                                <ul>
+                                    <li><label>Nombre:</label></li>
+                                    <li><input type="text" placeholder="Nombre" id="id_nombre3"></li>
+                                    <li><label>Descripción:</label></li>
+                                    <li><input type="text" placeholder="Descripcion" id="id_descripcion3"></li>
+                                </ul>
+
+                                <hr>
+                                 <p><div align="center">
+                                     <input type="button" name="botonEliminarCategoria" value="Eliminar" onclick="eliminarCategoria()">
+                                 </div></p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+         </div>
+     </div>
+    <div id="mostrarMensajeCategoria"></div>
+    <script>
+        function agregarCategoria(){
+            var nombre =  document.getElementById("id_nombre").value;
+            var descripcion = document.getElementById("id_descripcion").value;
+            $.ajax({
+                url: '/administrar-categoria/agregar/',
+                dataType:'json',
+                data: {'nombre':nombre,'descripcion':descripcion},
+                type: 'GET'
+
+            })
+            .done(function (data){
+                var htmlSeccion = ''
+                htmlSeccion = '<div class="ventana_flotante_mensaje">'+data.respuesta+'</div>'
+                $('#mostrarMensajeCategoria').html(htmlSeccion);
+                        $('#mostrarMensajeCategoria').show();
+               setTimeout("$('#mostrarMensajeCategoria').hide();", 2000);
+                $('#id_nombre').val('');
+                $('#id_descripcion').val('');
+                        setTimeout("location.reload()", 2000);
+             });
+        }
+
+        function editarCategoria(){
+            var cat = $('#categoria_editar').val();
+            var nombre =  document.getElementById("id_nombre2").value;
+            var descripcion = document.getElementById("id_descripcion2").value;
+            $.ajax({
+                url: '/administrar-categoria/editar/',
+                dataType:'json',
+                data: {'cat_id':cat,'nombre':nombre,'descripcion':descripcion},
+                type: 'GET'
+
+            })
+            .done(function (data){
+                var htmlSeccion = ''
+                htmlSeccion = '<div class="ventana_flotante_mensaje">'+data.respuesta+'</div>'
+                $('#mostrarMensajeCategoria').html(htmlSeccion);
+                        $('#mostrarMensajeCategoria').show();
+               setTimeout("$('#mostrarMensajeCategoria').hide();", 2000);
+                        setTimeout("location.reload()", 2000);
+             });
+        }
+
+        function eliminarCategoria(){
+            var cat = $('#categoria_eliminar').val();
+            $.ajax({
+                url: '/administrar-categoria/eliminar/',
+                dataType:'json',
+                data: {'cat_id':cat},
+                type: 'GET'
+
+            })
+            .done(function (data){
+                var htmlSeccion = ''
+                htmlSeccion = '<div class="ventana_flotante_mensaje">'+data.respuesta+'</div>'
+                $('#mostrarMensajeCategoria').html(htmlSeccion);
+                        $('#mostrarMensajeCategoria').show();
+               setTimeout("$('#mostrarMensajeCategoria').hide();", 2000);
+                setTimeout("location.reload()", 2000);
+             });
+        }
+
+    </script>
+    <script>
+        $('#categoria_editar').change(function(){
+             var cat = $(this).val();
+
+                $.ajax({
+                    url: '/administrar-categoria/listaCategorias/',
+                    dataType: 'json',
+                    data: {'cat_id':cat},
+                    type: 'GET'
+                })
+                .done(function (data){
+                     $('#id_nombre2').val(data.nombre);
+                     $('#id_descripcion2').val(data.descripcion);
+
+                })
+
+                .fail(function(jqXHR, textStatus, errorThrown){
+
+                 });
+        });
+        $('#categoria_eliminar').change(function(){
+             var cat = $(this).val();
+
+                $.ajax({
+                    url: '/administrar-categoria/listaCategorias/',
+                    dataType: 'json',
+                    data: {'cat_id':cat},
+                    type: 'GET'
+                })
+                .done(function (data){
+                     $('#id_nombre3').val(data.nombre);
+                     $('#id_descripcion3').val(data.descripcion);
+
+                })
+
+                .fail(function(jqXHR, textStatus, errorThrown){
+
+                 });
+        });
+    </script>
+
+    <script LANGUAGE="javascript">
+        function cambio(idcapa){
+            document.getElementById(idcapa).style.display=document.getElementById(idcapa).style.display==''?'none':'';
+             window.location='#'+idcapa;
+        }
+    </script>
+    {% endif %}
+    {% endif %}
+
+{% endblock %}

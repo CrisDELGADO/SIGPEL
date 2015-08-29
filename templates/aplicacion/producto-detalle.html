@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+
+{% block contenido %}
+{% load static from staticfiles %}
+
+   	 <div class="wrap">
+   	 	<div class="preview-page">
+   	 	       <div class="section group">
+				<div class="cont-desc span_1_of_2">
+					<ul class="back-links">
+						<li><a href="/productos/#contenidoPrincipal">Categoría</a> ::</li>
+						<li><a href="/productos/categoria/{{categoria.id}}/#contenidoPrincipal">{{categoria.nombre}}</a> ::</li>
+						<li>{{producto.nombre}}</li>
+						<div class="clear"> </div>
+					</ul>
+				  <div class="product-details">
+					<div class="grid images_3_of_2">
+						<ul id="etalage">
+                            {% for imagen in imagenes %}
+							<li>
+								<img class="etalage_thumb_image" src="/media/{{imagen.imagen}}" />
+								<img class="etalage_source_image" src="/media/{{imagen.imagen}}"/>
+							</li>
+                            {% endfor %}
+						</ul>
+				     </div>
+				   <div class="desc span_3_of_2">
+					<h2 style="padding-left: 20px;">{{producto.nombre}}</h2>
+					<p style="padding-left: 20px;">{{producto.descripcion}}</p>
+					<div class="price">
+						<p style="padding-left: 20px;">Precio: <span>${{producto.precio}}</span></p>
+                        <p style="padding-left: 20px;">Stock: <span id="cambiarStock">{{producto.cantidad}}</span></p>
+					</div>
+
+				<div class="share-desc">
+					<div class="share">
+						<p style="padding-left: 20px;">Pedir:</p><input id="cantidadPedir" type="number" class="text_box"
+                                                                        type="text" value="1" min="1" />
+					</div>
+                    <div class="clear"></div>
+				</div>
+                {% if user.is_authenticated %}
+                <p style="padding-left: 20px;" id="parrafoBotonPedido"><a onclick="agregarPedido('{{producto.id}}','{{producto.cantidad}}')"
+                                                  class="botonAgregarPedidos">Agregar a mis pedidos</a></p>
+                {% endif %}
+
+			</div>
+			<div class="clear"></div>
+		  </div>
+
+      </div>
+				   <div class="rightsidebar span_3_of_1 sidebar">
+					<h3>Te puede interesar</h3>
+					<ul class="popular-products">
+                        {% for comun in productoscomunes %}
+						<li>
+
+							 <h4><a href="preview.html">{{comun.nombre}}</a></h4>
+							  <a href="preview.html"><img style="height: 100px;" src="/media/{{comun.imagen}}" alt="" /></a>
+							  <div class="price-details">
+						       <div class="price-number">
+									<p><span class="rupees">${{comun.precio}}</span></p>
+							    </div>
+							       		<div class="add-cart">
+											<h4><a href="/productos/detalle/{{comun.id}}/#contenidoPrincipal">Ver</a></h4>
+									     </div>
+									 <div class="clear"></div>
+							</div>
+
+						</li>
+                        {% endfor %}
+
+				     </ul>
+
+
+					</div>
+ 		 		   </div>
+ 		 		</div>
+   	 		</div>
+   	 		<div class="content_top">
+    	        	<div class="wrap">
+		          	   <h3>Productos Nuevos</h3>
+		          	</div>
+		          	<div class="line"> </div>
+		          	<div class="wrap">
+		          	 <div class="ocarousel_slider">
+	      				<div class="ocarousel example_photos" data-ocarousel-perscroll="3">
+			                <div class="ocarousel_window">
+			                   {% for ultimoProducto in ultimosProductos%}
+                                    <a href="/productos/detalle/{{ultimoProducto.id}}/#contenidoPrincipal"
+                                       title="{{ultimoProducto.categoria}}"> <img  style="height: 100px;"
+                                       src="/media/{{ultimoProducto.imagen}}" alt="" /><p>{{ultimoProducto.nombre}}</p></a>
+                                {% endfor %}
+			                </div>
+			               <span>
+			                <a href="#" data-ocarousel-link="left" style="float: left;" class="prev"> </a>
+			                <a href="#" data-ocarousel-link="right" style="float: right;" class="next"> </a>
+			               </span>
+					   </div>
+				     </div>
+				   </div>
+    	       </div>
+
+    <div id="mostrarMensajePedido"></div>
+    <script>
+        function agregarPedido(e, f){
+            var id = e;
+            var cant =  document.getElementById("cantidadPedir").value;
+            var stock = f;
+            $.ajax({
+                url: '/productos/pedir/',
+                dataType:'json',
+                data: {'id':id,'cant':cant,'stock':stock},
+                type: 'GET'
+
+            })
+
+            .done(function (data){
+                var htmlSeccion = ''
+                htmlSeccion = '<div class="ventana_flotante_mensaje">'+data+'</div>'
+                var ac = f-cant;
+                if (ac>=0){
+                    $('#cambiarStock').html(ac);
+                    var htmlBoton = '<a class="botonAgregarPedidos" onclick="agregarPedido('+id+','+ac+')">Agregar a mis pedidos</a>'
+                    $('#parrafoBotonPedido').html(htmlBoton);
+                }
+
+                $('#mostrarMensajePedido').html(htmlSeccion);
+                        $('#mostrarMensajePedido').show();
+               setTimeout("$('#mostrarMensajePedido').hide();", 2000);
+             })
+
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                    $('#mostrarMensajePedido').html(errorThrown);
+            });
+
+
+        }
+    </script>
+{% endblock %}

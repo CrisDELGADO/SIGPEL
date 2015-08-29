@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+
+{% block contenido%}
+
+    {% if user.is_authenticated %}
+    {% if not user.rol_id == 2 and not user.rol_id == 3 %}
+     <div class="wrap">
+         <div class="preview-page">
+             <div class="contact-form">
+                 <h3>Sección de Administración - Usuarios</h3>
+             </div>
+            <div class="formAdmin">
+                <h1>Usuarios</h1>
+                <hr>
+                <p>
+                   En esta sección se podrá: cambiar el estado (ACTIVO - INACTIVO) de Empleados, Clientes.
+                </p>
+                <hr>
+                <select style="min-width: 120px; width: 40%; height: 30px;" id="selectTipoRol">
+                    <option value="3">Empleados</option>
+                    <option value="2">Clientes</option>
+                </select>
+                <input style="width: 40%;height: 24px;" type="text" placeholder="Cédula" maxlength="10"
+                       id="campoCedulaAdminUsuario" onkeypress="return solonumeros(event)">
+                <hr>
+                <div id="tablaAdminUsuario">
+                <table class="sortable" style="width: 100%;" id="tablaAdminUsuario2">
+                <tr bgcolor="#5f9ea0" style="cursor: pointer;">
+                    <td style="width: 10%;">Nº CEDULA</td>
+                    <td style="width: 25%;">APELLIDOS</td>
+                    <td style="width: 25%;">NOMBRES</td>
+                    <td style="width: 20%;">ESTADO</td>
+                    <td style="width: 20%;">OPCIONES</td>
+                </tr>
+
+                {% for usuario in usuarios %}
+                    <tr bgcolor="#00ffff">
+                        <td>{{usuario.cedula}}</td>
+                        <td>{{usuario.apellidos}}</td>
+                        <td>{{usuario.nombres}}</td>
+                        {% if usuario.is_active %}
+                        <td>ACTIVO</td>
+                        <td><a style="color: #354973;cursor: pointer;" onclick="cambiarEstadoUsuario('{{usuario.id}}','{{usuario.is_active}}')">Cambiar a INACTIVO</a></td>
+                        {% else %}
+                        <td>INACTIVO</td>
+                        <td><a style="color: #354973;cursor: pointer;" onclick="cambiarEstadoUsuario('{{usuario.id}}','{{usuario.is_active}}')">Cambiar a ACTIVO</a></td>
+                        {% endif %}
+
+
+                    </tr>
+                {% endfor %}
+            </table>
+            </div>
+            </div>
+
+         </div>
+     </div>
+    <div id="mostrarMensajeUsuario"></div>
+
+    <script>
+        function cambiarEstadoUsuario(idUser, estado){
+            var id = idUser;
+            var est = estado;
+            $.ajax({
+                url: '/administrar-usuario/estado/',
+                dataType:'json',
+                data: {'id':id,'est':est},
+                type: 'GET'
+
+            })
+            .done(function (data){
+                var htmlSeccion = ''
+                htmlSeccion = '<div class="ventana_flotante_mensaje">'+data.respuesta+'</div>'
+                $('#mostrarMensajeUsuario').html(htmlSeccion);
+                        $('#mostrarMensajeUsuario').show();
+               setTimeout("$('#mostrarMensajeUsuario').hide();", 2000);
+                setTimeout("location.reload()", 2000);
+
+             });
+        }
+    </script>
+    <script>
+        $('#selectTipoRol').change(function(){
+             var rol = $(this).val();
+            $('#campoCedulaAdminUsuario').val('');
+
+                $.ajax({
+                    url: '/administrar-usuario/listaUsuarios/',
+                    dataType: 'json',
+                    data: {'rol':rol},
+                    type: 'GET'
+                })
+                .done(function (data){
+                     var html = ''
+                     html = '<table class="sortable" style="width: 100%;" ><tr bgcolor="#5f9ea0" style="cursor: pointer;"> <td style="width: 10%;">Nº CEDULA</td>'+
+                         '<td style="width: 25%;">APELLIDOS</td><td style="width: 25%;">NOMBRES</td><td style="width: 20%;">' +
+                         'ESTADO</td><td style="width: 20%;">OPCIONES</td></tr>'
+                     for(var i=0; i<data.length;i++){
+                         html += ' <tr bgcolor="#00ffff"><td>'+data[i].cedula2+'</td><td>'+data[i].apellidos2+'</td>' +
+                        '<td>'+data[i].nombres2+'</td>'
+                             if(data[i].is_active2==true){
+                                 html+='<td>ACTIVO</td><td><a style="color: #354973;cursor: pointer;" onclick="cambiarEstadoUsuario('+data[i].id2+','+data[i].is_active2+')">Cambiar a INACTIVO</a></td>'
+                             }
+                             else{
+                                 html+='<td>INACTIVO</td><td><a style="color: #354973;cursor: pointer;" onclick="cambiarEstadoUsuario('+data[i].id2+','+data[i].is_active2+')">Cambiar a ACTIVO</a></td>'
+                             }
+
+                         html += '</tr>'
+
+                     }
+                     html += '</table>'
+                    $('#tablaAdminUsuario').html(html);
+
+                })
+
+                .fail(function(jqXHR, textStatus, errorThrown){
+                    $('#tablaAdminUsuario').html('ERROR');
+                 });
+        });
+
+        $('#campoCedulaAdminUsuario').on('keyup',function(){
+            var cedula = $(this).val();
+            var rol = $('#selectTipoRol').val();
+                $.ajax({
+                    url: '/administrar-usuario/listaUsuarios/',
+                    dataType: 'json',
+                    data: {'busqueda':cedula,'rol':rol},
+                    type: 'GET'
+                })
+                .done(function (data){
+                     var html = ''
+                     html = '<table class="sortable" style="width: 100%;" ><tr bgcolor="#5f9ea0" style="cursor: pointer;"> <td style="width: 10%;">Nº CEDULA</td>'+
+                         '<td style="width: 25%;">APELLIDOS</td><td style="width: 25%;">NOMBRES</td><td style="width: 20%;">' +
+                         'ESTADO</td><td style="width: 20%;">OPCIONES</td></tr>'
+                     for(var i=0; i<data.length;i++){
+                         html += ' <tr bgcolor="#00ffff"><td>'+data[i].cedula2+'</td><td>'+data[i].apellidos2+'</td>' +
+                        '<td>'+data[i].nombres2+'</td>'
+                             if(data[i].is_active2==true){
+                                 html+='<td>ACTIVO</td><td><a style="color: #354973;cursor: pointer;" onclick="cambiarEstadoUsuario('+data[i].id2+','+data[i].is_active2+')">Cambiar a INACTIVO</a></td>'
+                             }
+                             else{
+                                 html+='<td>INACTIVO</td><td><a style="color: #354973;cursor: pointer;" onclick="cambiarEstadoUsuario('+data[i].id2+','+data[i].is_active2+')">Cambiar a ACTIVO</a></td>'
+                             }
+
+                         html += '</tr>'
+
+                     }
+                     html += '</table>'
+                    $('#tablaAdminUsuario').html(html);
+                });
+        }).keyup();
+
+        $('#campoCedulaAdminUsuario2').autocomplete({
+            minLength: 1,
+            source: function(req, add){
+                var search = $('#campoCedulaAdminUsuario').val();
+                $.ajax({
+                    url: '/administrar-usuario/listaUsuarios/',
+                    async: false,
+                    dataType: 'json',
+                    data: {'busqueda':search},
+                    type: 'GET'
+                })
+                .done(function (data){
+                    var suggestions=[];
+                    $.each(data, function(index, objeto){
+                        suggestions.push(objeto);
+                    });
+                    add(suggestions);
+                });
+            }
+        });
+    </script>
+
+    <script LANGUAGE="javascript">
+        function cambio(idcapa){
+            document.getElementById(idcapa).style.display=document.getElementById(idcapa).style.display==''?'none':'';
+            window.location='#'+idcapa;
+        }
+    </script>
+    {% endif %}
+    {% endif %}
+
+{% endblock %}

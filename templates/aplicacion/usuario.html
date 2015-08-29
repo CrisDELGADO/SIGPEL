@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+
+{% block contenido %}
+<div class="wrap">
+    <div class="preview-page">
+        <div class="contact-form">
+            <h3>Registro de Usuario</h3>
+            </div>
+        </div>
+    {% if not user.is_authenticated %}
+          <div class="formOtro">
+
+
+        <form method="POST" id="formularioNuevoUsuario" enctype="multipart/form-data">
+            {% csrf_token %}
+        	<div>
+        		<p>
+                    <h2>Nuevo Usuario</h2>
+                    <hr>
+                </p>
+                <ul>
+                    <li>{{ form }}</li>
+
+                </ul>
+
+
+                <p>
+                    <hr>
+                    <div align="center"><input type="submit" value="Registrarse"/> </div>
+                </p>
+          	</div>
+      	</form>
+              </div>
+          <div id="mierda"></div>
+    <script>
+        function enviarFormularioNuevoUsuario(){
+
+            $.ajax({
+                type: 'POST',
+                url: '/nuevousuario_ajax/',
+                dataType: 'json',
+                async: true,
+                data: {
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    nombres: $('#id_nombres').val(),
+                    apellidos: $('#id_apellidos').val(),
+                    username: $('#id_username').val(),
+                    cedula: $('#id_cedula').val(),
+                    telefono: $('#id_telefono').val(),
+                    password: $('#id_password').val(),
+                    password2: $('#id_password2').val(),
+                    fecha_nac: $('#id_fecha_nac').val(),
+                    ciudad: $('#id_ciudad').val(),
+                    rol: $('#id_rol').val(),
+                    clave: $('#id_clave').val()
+                }
+            })
+                    .done(function (data){
+                        var html = ''
+                        html += '<p>'+data.ErrorUsername+'</p>'
+                        html += '<p>'+data.ErrorCedula+'</p>'
+
+                        $('#mierda').html(html);
+                    })
+                    .fail(function(jqXHR, textStatus, errorThrown){
+                         $('#mierda').html(errorThrown);
+                    });
+        }
+
+    </script>
+
+        <script>
+
+            $('#id_rol').change(function(){
+                var rol = $(this).val();
+                var html= ''
+                if (rol==2){
+                    $('#id_clave').val('cliente01');
+                }else{
+                    $('#id_clave').val('');
+                }
+
+
+            });
+        </script>
+        <script>
+            $('#id_ciudad').change(function(){
+                var ciu = $(this).val();
+
+                $.ajax({
+                    url: '/usuario/provincia/',
+                    dataType: 'json',
+                    data: {'ciudad_id':ciu},
+                    type: 'GET'
+                })
+                .done(function (data){
+
+                     var html = data.nombre
+                     $('#id_provincia').val(html);
+
+                })
+
+                .fail(function(jqXHR, textStatus, errorThrown){
+                            $('#id_provincia').val('');
+                 });
+
+            });
+        </script>
+          <script>
+              $('#botonRegistrar2').on('click',mostrarError);
+              function mostrarError(){
+                $.ajax({
+                    success:  function(){
+                            var html = '<p>{{form.errors}}</p>'
+
+                           $('#mierda').html(html);
+                       }
+                   });
+              }
+          </script>
+          <script>
+
+              $('#formularioNuevoUsuario2').bind('submit',function(){
+
+
+                   $.ajax({
+                      data: $(this).serialize(),
+                       url: '/usuario_ajax/',
+                       type: 'POST',
+                       dataType: 'json'
+
+
+                   })
+                  .done(function (data){
+                         var htmlError = ''
+                           if (data.errores.username){
+                               htmlError += '<p>'+data.errores.username+'</p>'
+
+                           }
+                           $('#mierda').html(htmlError);
+                    })
+                    .fail(function(jqXHR, textStatus, errorThrown){
+                         $('#mierda').html(errorThrown);
+                    });
+              });
+
+          </script>
+
+
+          {% endif %}
+    </div>
+
+</div>
+{% endblock %}

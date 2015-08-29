@@ -1,0 +1,318 @@
+{% extends 'base.html' %}
+
+{% block contenido%}
+
+    {% if user.is_authenticated %}
+    {% if not user.rol_id == 2 %}
+     <div class="wrap">
+         <div class="preview-page">
+             <div class="contact-form">
+                 <h3>Sección de Administración - Productos</h3>
+             </div>
+             <div class="formAdmin">
+                <h1>Productos</h1>
+                <hr>
+                <p>
+                    En esta sección se podrá: añadir, editar, eliminar Productos.
+                </p>
+                <hr>
+                <a><input type="button" value="Añadir" id="anadirProducto" onclick="cambio('seccionAgregarProducto')"></a>
+                <a><input type="button" value="Editar" id="editarProducto" onclick="cambio('seccionEditarProducto')"></a>
+                <a><input type="button" value="Eliminar" id="eliminarProducto" onclick="cambio('seccionEliminarProducto')"></a>
+                 <div id="seccionAgregarProducto" style="position: relative;display:none">
+                    <br>
+                    <div class="formAdmin">
+                        <h2>Añadir Producto</h2>
+                        <hr>
+                        <form method="post"  enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div>
+                                <ul>
+                                    <li> {{ formProducto }} </li>
+                                </ul>
+                                <hr>
+                                 <p><div align="center">
+                                     <input type="submit" name="botonAgregarProducto" value="Agregar">
+                                 </div></p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div id="seccionEditarProducto" style="position: relative;display:none">
+                    <br>
+                    <div class="formAdmin">
+                        <h2>Editar Producto</h2>
+                        <hr>
+                        <form method="post" >
+                            {% csrf_token %}
+                            <div>
+                                <ul>
+                                    <li><label>Producto</label></li>
+                                    <li>
+                                        <select id="producto_editar">
+                                            <option value>-----</option>
+                                        {% for prod in listaProductosAdmin %}
+                                            <option value="{{prod.id}}">{{prod.nombre}}</option>
+                                        {% endfor %}
+                                        </select>
+                                    </li>
+                                    <hr>
+                                    <li><label>Nombre:</label></li>
+                                    <li><input type="text" placeholder="Nombre" id="id_nombre2"></li>
+                                    <li><label>Descripción:</label></li>
+                                    <li><input type="text" placeholder="Descripción" id="id_descripcion2"></li>
+                                    <li><label>Precio:</label></li>
+                                    <li><input type="text" placeholder="Precio" id="id_precio2" onkeypress="return solonumerosdecimales(event)"></li>
+                                    <li><label>Cantidad:</label></li>
+                                    <li><input type="number" min="1" value="1" id="id_cantidad2"></li>
+                                    <li><label>Categoria:</label></li>
+                                    <li><select id="id_categoria2">
+                                        <option value>------</option>
+                                        {% for cat in listaCategoriasAdmin %}
+                                        <option value="{{cat.id}}">{{cat.nombre}}</option>
+                                        {% endfor %}
+                                    </select></li>
+                                    <hr>
+                                    <div id="imagenMostrar"></div>
+                                </ul>
+                                <hr>
+                                 <p><div align="center">
+                                     <input type="button" name="botonEditarProducto" value="Guardar Cambios" onclick="editarProducto()">
+                                 </div></p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                 <div id="seccionEliminarProducto" style="position: relative;display:none">
+                    <br>
+                    <div class="formAdmin">
+                        <h2>Eliminar Producto</h2>
+                        <hr>
+                        <form method="post"  enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div>
+                                <ul>
+                                    <li><label>Producto</label></li>
+                                    <li>
+                                        <select id="producto_eliminar">
+                                            <option value>-----</option>
+                                        {% for prod in listaProductosAdmin %}
+                                            <option value="{{prod.id}}">{{prod.nombre}}</option>
+                                        {% endfor %}
+                                        </select>
+                                    </li>
+                                    <hr>
+                                    <li><label>Nombre:</label></li>
+                                    <li><input type="text" placeholder="Nombre" id="id_nombre3"></li>
+                                    <li><label>Descripción:</label></li>
+                                    <li><input type="text" placeholder="Descripción" id="id_descripcion3"></li>
+                                    <li><label>Precio:</label></li>
+                                    <li><input type="text" placeholder="Precio" id="id_precio3" onkeypress="return solonumerosdecimales(event)"></li>
+                                    <li><label>Cantidad:</label></li>
+                                    <li><input type="number" min="1" value="1" id="id_cantidad3"></li>
+                                    <li><label>Categoria:</label></li>
+                                    <li><select id="id_categoria3">
+                                        <option value>------</option>
+                                        {% for cat in listaCategoriasAdmin %}
+                                        <option value="{{cat.id}}">{{cat.nombre}}</option>
+                                        {% endfor %}
+                                    </select></li>
+                                    <hr>
+                                    <div id="imagenMostrar2"></div>
+                                </ul>
+                                <hr>
+                                 <p><div align="center">
+                                     <input type="button" name="botonEliminarProducto" value="Eliminar" onclick="eliminarProducto()">
+                                 </div></p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+         </div>
+     </div>
+    <div id="mostrarMensajeProducto"></div>
+    <script>
+        function agregarProducto(){
+            var nombre =  document.getElementById("id_nombre").value;
+            var descripcion = document.getElementById("id_descripcion").value;
+            var precio = document.getElementById("id_precio").value;
+            var cantidad = document.getElementById("id_cantidad").value;
+            var categoria = document.getElementById("id_categoria").value;
+            var imagen1 = document.getElementById("id_imagen1").value;
+            var imagen2 = document.getElementById("id_imagen2").value;
+            var imagen3 = document.getElementById("id_imagen3").value;
+            var imagen4 = document.getElementById("id_imagen4").value;
+            var imagen5 = document.getElementById("id_imagen5").value;
+            $.ajax({
+                url: '/administrar-producto/agregar/',
+                dataType:'json',
+                data: {'nombre':nombre,'descripcion':descripcion,'precio':precio,'cantidad':cantidad,'categoria':categoria,
+                'imagen1':imagen1,'imagen2':imagen2,'imagen3':imagen3,'imagen4':imagen4,'imagen5':imagen5},
+                type: 'GET'
+
+            })
+            .done(function (data){
+                var htmlSeccion = ''
+                htmlSeccion = '<div class="ventana_flotante_mensaje">'+data.respuesta+'</div>'
+                $('#mostrarMensajeProducto').html(htmlSeccion);
+                        $('#mostrarMensajeProducto').show();
+               setTimeout("$('#mostrarMensajeProducto').hide();", 2000);
+                setTimeout("location.reload()", 2000);
+             });
+        }
+
+        function editarProducto(){
+            var id = $('#producto_editar').val();
+           var nombre =  document.getElementById("id_nombre2").value;
+            var descripcion = document.getElementById("id_descripcion2").value;
+            var precio = document.getElementById("id_precio2").value;
+            var cantidad = document.getElementById("id_cantidad2").value;
+            var categoria = $('#id_categoria2').val();
+            $.ajax({
+                url: '/administrar-producto/editar/',
+                dataType:'json',
+                data: {'id':id,'nombre':nombre,'descripcion':descripcion,'precio':precio,'cantidad':cantidad,'categoria':categoria},
+                type: 'GET'
+
+            })
+            .done(function (data){
+                var htmlSeccion = ''
+                htmlSeccion = '<div class="ventana_flotante_mensaje">'+data.respuesta+'</div>'
+                $('#mostrarMensajeProducto').html(htmlSeccion);
+                        $('#mostrarMensajeProducto').show();
+               setTimeout("$('#mostrarMensajeProducto').hide();", 2000);
+                setTimeout("location.reload()", 2000);
+             });
+        }
+
+        function eliminarProducto(){
+            var id = $('#producto_eliminar').val();
+
+            $.ajax({
+                url: '/administrar-producto/eliminar/',
+                dataType:'json',
+                data: {'id':id},
+                type: 'GET'
+
+            })
+            .done(function (data){
+                var htmlSeccion = ''
+                htmlSeccion = '<div class="ventana_flotante_mensaje">'+data.respuesta+'</div>'
+                $('#mostrarMensajeProducto').html(htmlSeccion);
+                        $('#mostrarMensajeProducto').show();
+               setTimeout("$('#mostrarMensajeProducto').hide();", 2000);
+                setTimeout("location.reload()", 2000);
+             });
+        }
+
+    </script>
+    <script>
+        $('#producto_editar').change(function(){
+             var pro = $(this).val();
+
+                $.ajax({
+                    url: '/administrar-producto/listaProductos/',
+                    dataType: 'json',
+                    data: {'pro_id':pro},
+                    type: 'GET'
+                })
+                .done(function (data){
+                     $('#id_nombre2').val(data.nombre2);
+                     $('#id_descripcion2').val(data.descripcion2);
+                    $('#id_precio2').val(data.precio2);
+                    $('#id_cantidad2').val(data.cantidad2);
+                    $('#id_categoria2').val(data.categoria2);
+                    var html=''
+                     if(data.imagen12!=''){
+                         html += '<img width="150" height="200" src="/media/'+data.imagen12+'"/>&nbsp;&nbsp;&nbsp;'
+                     }
+                             html += '<input type="file" width="150">&nbsp;&nbsp;&nbsp;<br>'
+                     if(data.imagen22!=''){
+                         html += '<img width="150" height="200" src="/media/'+data.imagen22+'"/>&nbsp;&nbsp;&nbsp;'
+                     }
+                             html += '<input type="file" width="150">&nbsp;&nbsp;&nbsp;<br>'
+                     if(data.imagen32!=''){
+                         html += '<img width="150" height="200" src="/media/'+data.imagen32+'"/>&nbsp;&nbsp;&nbsp;'
+                     }
+                             html += '<input type="file" width="150">&nbsp;&nbsp;&nbsp;<br>'
+                     if(data.imagen42!=''){
+                         html += '<img width="150" height="200" src="/media/'+data.imagen42+'"/>&nbsp;&nbsp;&nbsp;'
+                     }
+                             html += '<input type="file" width="150">&nbsp;&nbsp;&nbsp;<br>'
+                     if(data.imagen52!=''){
+                         html += '<img width="150" height="200" src="/media/'+data.imagen52+'"/>'
+                     }
+                             html += '<input type="file" width="150">&nbsp;&nbsp;&nbsp;'
+
+
+
+
+                     $('#imagenMostrar').html(html);
+                })
+
+                .fail(function(jqXHR, textStatus, errorThrown){
+
+                 });
+        });
+
+        $('#producto_eliminar').change(function(){
+             var pro = $(this).val();
+
+                $.ajax({
+                    url: '/administrar-producto/listaProductos/',
+                    dataType: 'json',
+                    data: {'pro_id':pro},
+                    type: 'GET'
+                })
+                .done(function (data){
+                     $('#id_nombre3').val(data.nombre2);
+                     $('#id_descripcion3').val(data.descripcion2);
+                    $('#id_precio3').val(data.precio2);
+                    $('#id_cantidad3').val(data.cantidad2);
+                    $('#id_categoria3').val(data.categoria2);
+                    var html=''
+                     if(data.imagen12!=''){
+                         html += '<img width="150" height="200" src="/media/'+data.imagen12+'"/>&nbsp;&nbsp;&nbsp;'
+                     }
+
+                     if(data.imagen22!=''){
+                         html += '<img width="150" height="200" src="/media/'+data.imagen22+'"/>&nbsp;&nbsp;&nbsp;'
+                     }
+
+                     if(data.imagen32!=''){
+                         html += '<img width="150" height="200" src="/media/'+data.imagen32+'"/>&nbsp;&nbsp;&nbsp;'
+                     }
+
+                     if(data.imagen42!=''){
+                         html += '<img width="150" height="200" src="/media/'+data.imagen42+'"/>&nbsp;&nbsp;&nbsp;'
+                     }
+
+                     if(data.imagen52!=''){
+                         html += '<img width="150" height="200" src="/media/'+data.imagen52+'"/>'
+                     }
+
+
+
+
+
+                     $('#imagenMostrar2').html(html);
+                })
+
+                .fail(function(jqXHR, textStatus, errorThrown){
+
+                 });
+        });
+    </script>
+
+    <script LANGUAGE="javascript">
+        function cambio(idcapa){
+            document.getElementById(idcapa).style.display=document.getElementById(idcapa).style.display==''?'none':'';
+            window.location='#'+idcapa;
+        }
+    </script>
+    {% endif %}
+    {% endif %}
+
+{% endblock %}

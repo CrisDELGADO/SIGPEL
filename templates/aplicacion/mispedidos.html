@@ -1,0 +1,232 @@
+{% extends 'base.html' %}
+ {% load static from staticfiles %}
+
+{% block contenido %}
+{% if user.is_authenticated %}
+<div class="wrap">
+    <div class="preview-page">
+        <div class="contact-form">
+            <h3>Mis Pedidos</h3>
+            </div>
+        </div>
+
+        <div class="contenedorMisPedidos">
+            {% if pedidos %}
+
+            <table class="sortable" style="width: 100%;">
+                <tr bgcolor="#5f9ea0" style="cursor: pointer;">
+                    <td style="width: 10%;">Nº Pedido</td>
+                    <td style="width: 25%;">Fecha Inicio</td>
+                    <td style="width: 25%;">Fecha Fin</td>
+                    <td style="width: 20%;">Estado</td>
+                    <td style="width: 20%;">Opciones</td>
+                </tr>
+
+                {% for pedido in pedidos %}
+                    <tr bgcolor="#00ffff">
+                        <td>{{pedido.id}}</td>
+                        <td>{{pedido.fecha_ini}}</td>
+                        <td>{{pedido.fecha_fin}}</td>
+                        <td>{{pedido.estado}}</td>
+                        <td>
+                            <a style="cursor: pointer;" onclick="verPedidoDetalle('{{pedido.id}}','{{pedido.fecha_ini}}',
+                            '{{pedido.fecha_fin}}','{{pedido.estado}}')">
+                                <img src="{% static 'images/search_16.png' %}" height="20px" title="Ver"/>
+                            </a>
+                            {% if pedido.estado == 'PENDIENTE' %}
+                            <a style="cursor: pointer;" onclick="editarPedidoDetalle('{{pedido.id}}','{{pedido.fecha_ini}}',
+                            '{{pedido.fecha_fin}}','{{pedido.estado}}')">
+                                <img src="{% static 'images/editP.png' %}" height="20px" title="Editar"/>
+                            </a>
+
+                            <a style="cursor: pointer;" onclick="cancelarPedido('{{pedido.id}}')">
+                                <img src="{% static 'images/cancel.png' %}" height="20px" title="Cancelar"/>
+                            </a>
+                            {% endif %}
+                        </td>
+
+                    </tr>
+                {% endfor %}
+            </table>
+            {% else %}
+                <h2>Aún no ha hecho ningún pedido. Mire nuestros productos <a style="cursor: pointer;" href="/productos/#contenidoPrincipal">aquí.</a></h2>
+            {% endif %}
+        </div>
+                    <script>
+
+                        function verPedidoDetalle(e, fi, ff, es){
+                              var id = e
+                                var fechaI = fi;
+                                var fechaF = ff;
+                                var estado = es;
+                               $.ajax({
+                                   url: '/mispedidos/pedido/detalle/',
+                                   dataType:'json',
+                                   data: {'id':id},
+                                   type: 'GET'
+
+
+
+                               })
+
+                                .done(function (data){
+
+                                    var htmlSeccion = ''
+
+                                       for (var i=0; i<data.length; i++){
+                                           htmlSeccion += '<tr bgcolor="#ffe4c4">'+
+        '<td>'+data[i].cantidad+'</td><td>'+data[i].producto+'</td><td align="right">'+data[i].precio+
+                                           '</td><td align="right">'+(data[i].precio2)+'</td></tr>'
+
+
+                                       }
+                                        var htmlD = '<div class="ventana_flotante"><h2>Detalle del Pedido</h2>'+
+        '<a style="cursor: pointer;" onclick="cerrarVentanaPedidoDetalle()"><img src="{% static "images/cancel.png" %}" height="20px" align="right"></a>'+
+         '<a style="cursor: pointer;" href="/mispedidos/pedido/imprimir/'+id+'/"><img style="padding-right: 20px;" title="Imprimir" src="{% static "images/imprimir.png" %}" height="20px" align="right"></a>' +
+        '<br><br> <hr> <table> <tr> <td>Código:</td><td style="padding-left: 10px;">'+e+'</td> </tr> <tr> <td>Fecha Inicio:</td>'+
+         '<td style="padding-left: 10px;">'+fechaI+'</td></tr><tr><td>Fecha Fin:</td><td style="padding-left: 10px;">'+
+          ''+fechaF+'</td> </tr> <tr><td>Estado:</td> <td style="padding-left: 10px;">'+estado+'</td> </tr> </table><br>'+
+        '<table class="tablaPedido"><tr bgcolor="#ff7f50"><td style="width: 10%;">Cantidad</td><td style="width: 50%;">'+
+        'Producto</td><td style="width: 20%;">Precio Unit.</td><td style="width: 20%;">Precio</td></tr>'+htmlSeccion+
+                                                        '<tr><td style="border: 0px;"></td>'+
+        '<td style="border: 0px;"></td><td bgcolor="#ff7f50">Subtotal:</td><td  bgcolor="#ffe4c4" align="right">'+data[data.length-1].sub+'</td>'+
+       '</tr><tr><td style="border: 0px;"></td><td style="border: 0px;"></td><td bgcolor="#ff7f50">IVA:</td> ' +
+       '<td  bgcolor="#ffe4c4" align="right">'+data[data.length-1].iva+'</td> </tr> <tr><td style="border: 0px;"></td><td style="border: 0px;"></td>'+
+      '<td bgcolor="#ff7f50">Total:</td><td  bgcolor="#ffe4c4" align="right">'+data[data.length-1].total+'</td></tr></table> </div>'
+
+                                       $('#pedidoDetalle').html(htmlD);
+                                })
+                                .fail(function (jqXHR, textStatus, errorThrown) {
+                                    $('#pedidoDetalle').html(errorThrown);
+                                });
+
+
+                        }
+
+
+                        function editarPedidoDetalle(e, fi, ff, es){
+                              var id = e
+                                var fechaI = fi;
+                                var fechaF = ff;
+                                var estado = es;
+                               $.ajax({
+                                   url: '/mispedidos/pedido/detalle/',
+                                   dataType:'json',
+                                   data: {'id':id},
+                                   type: 'GET'
+
+                               })
+
+                                .done(function (data){
+                                    var contador = 0
+                                    var htmlSeccion = ''
+
+                                       for (var i=0; i<data.length; i++){
+
+                                           htmlSeccion += '<tr bgcolor="#ffe4c4">'+
+        '<td><input style="width: 95%;" type="number" onkeypress="return bloquearCampoNumber(event)" min="1" max="'+data[i].stock+'" id="editarProductoCantidad'+i+'"  value="'+data[i].cantidad+'"></td><td>'+data[i].producto+'</td><td align="right">'+data[i].precio+
+                                           '</td><td align="right">'+(data[i].precio2)+'</td><td align="center"><input type="checkbox" id="editarProductoEliminar'+i+'"></td></tr>'
+                                            contador = i+1;
+
+                                       }
+                                        var htmlD = '<div class="ventana_flotante"><h2>Detalle del Pedido - Editar</h2>'+
+        '<a style="cursor: pointer;" onclick="cerrarVentanaPedidoDetalle()"><img src="{% static "images/cancel.png" %}" height="20px" align="right"></a>'+
+        '<a style="cursor: pointer;" onclick="guardarDatosPedidoDetalle('+id+','+contador+')"><img style="padding-right: 20px;" title="Guardar" src="{% static "images/guardar.png" %}" height="20px" align="right"></a>' +
+         '<br><br> <hr> <table> <tr> <td>Código:</td><td style="padding-left: 10px;">'+e+'</td> </tr> <tr> <td>Fecha Inicio:</td>'+
+         '<td style="padding-left: 10px;">'+fechaI+'</td></tr><tr><td>Fecha Fin:</td><td style="padding-left: 10px;">'+
+          ''+fechaF+'</td> </tr> <tr><td>Estado:</td> <td style="padding-left: 10px;">'+estado+'</td> </tr> </table><br>'+
+        '<table class="tablaPedido"><tr bgcolor="#ff7f50"><td style="width: 10%;">Cantidad</td><td style="width: 50%;">'+
+        'Producto</td><td style="width: 20%;">Precio Unit.</td><td style="width: 20%;">Precio</td><td style="width: 10%;">Eliminar</td></tr>'+htmlSeccion+
+                                                        '<tr><td style="border: 0px;"></td>'+
+        '<td style="border: 0px;"></td><td bgcolor="#ff7f50">Subtotal:</td><td  bgcolor="#ffe4c4" align="right">'+data[data.length-1].sub+'</td>'+
+       '</tr><tr><td style="border: 0px;"></td><td style="border: 0px;"></td><td bgcolor="#ff7f50">IVA:</td> ' +
+       '<td  bgcolor="#ffe4c4" align="right">'+data[data.length-1].iva+'</td> </tr> <tr><td style="border: 0px;"></td><td style="border: 0px;"></td>'+
+      '<td bgcolor="#ff7f50">Total:</td><td  bgcolor="#ffe4c4" align="right">'+data[data.length-1].total+'</td></tr></table> </div>'
+
+                                       $('#pedidoDetalle').html(htmlD);
+                                })
+                                .fail(function (jqXHR, textStatus, errorThrown) {
+                                    $('#pedidoDetalle').html(errorThrown);
+                                });
+
+
+                        }
+                    </script>
+
+    <script>
+
+
+
+
+
+         function cerrarVentanaPedidoDetalle(){
+             $('#pedidoDetalle').html('');
+         }
+
+         function cancelarPedido(idPedido){
+             var idPedido = idPedido;
+             $.ajax({
+                url: '/mispedidos/pedido/cancelar/',
+                dataType:'json',
+                 data: {'idPedido':idPedido},
+                 type: 'GET'
+
+             })
+
+              .done(function (data){
+                         var htmlSeccion = ''
+                htmlSeccion = '<div class="ventana_flotante_mensaje">'+data.respuesta+'</div>'
+                $('#pedidoDetalle').html(htmlSeccion);
+                        $('#pedidoDetalle').show();
+               setTimeout("$('#pedidoDetalle').hide();", 2000);
+                    setTimeout("location.reload()", 1000);
+              });
+         }
+
+         function guardarDatosPedidoDetalle(idPedido, contador){
+             var idPedido = idPedido;
+
+             var listaCantidad = {};
+             var listaBorrar = {};
+
+             var html = ''
+             for (var i=0; i<contador; i++){
+                var cantidad = $('#editarProductoCantidad'+i+'').val();
+                 listaCantidad[i]=cantidad;
+                 var campoCheck = $('#editarProductoEliminar'+i+'');
+                 if(campoCheck[0].checked){
+                     listaBorrar[i] = 'si';
+                 }else{
+                     listaBorrar[i] = 'no';
+                 }
+
+             }
+
+
+
+            $.ajax({
+                url: '/mispedidos/pedido/editar/',
+                dataType:'json',
+                 data: {'idPedido':idPedido,'listaCantidad':listaCantidad,'contador':contador,'listaBorrar':listaBorrar},
+                 type: 'GET'
+
+             })
+
+              .done(function (data){
+                    $('#pedidoDetalle').html('');
+              })
+             .fail(function (jqXHR, textStatus, errorThrown) {
+                     $('#pedidoDetalle').html('error');
+              });
+
+
+         }
+
+    </script>
+
+    <div id="pedidoDetalle"></div>
+
+    {% endif %}
+    </div>
+</div>
+{% endblock %}
