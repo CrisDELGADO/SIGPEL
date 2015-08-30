@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+﻿{% extends 'base.html' %}
  {% load static from staticfiles %}
 
 {% block contenido %}
@@ -82,7 +82,7 @@
                                        }
                                         var htmlD = '<div class="ventana_flotante"><h2>Detalle del Pedido</h2>'+
         '<a style="cursor: pointer;" onclick="cerrarVentanaPedidoDetalle()"><img src="{% static "images/cancel.png" %}" height="20px" align="right"></a>'+
-         '<a style="cursor: pointer;" href="/mispedidos/pedido/imprimir/'+id+'/"><img style="padding-right: 20px;" title="Imprimir" src="{% static "images/imprimir.png" %}" height="20px" align="right"></a>' +
+         '<a style="cursor: pointer;" target="_blank" href="/pedido/imprimir/'+id+'/"><img style="padding-right: 20px;" title="Imprimir" src="{% static "images/imprimir.png" %}" height="20px" align="right"></a>' +
         '<br><br> <hr> <table> <tr> <td>Código:</td><td style="padding-left: 10px;">'+e+'</td> </tr> <tr> <td>Fecha Inicio:</td>'+
          '<td style="padding-left: 10px;">'+fechaI+'</td></tr><tr><td>Fecha Fin:</td><td style="padding-left: 10px;">'+
           ''+fechaF+'</td> </tr> <tr><td>Estado:</td> <td style="padding-left: 10px;">'+estado+'</td> </tr> </table><br>'+
@@ -109,6 +109,9 @@
                                 var fechaI = fi;
                                 var fechaF = ff;
                                 var estado = es;
+
+
+				
                                $.ajax({
                                    url: '/mispedidos/pedido/detalle/',
                                    dataType:'json',
@@ -122,9 +125,10 @@
                                     var htmlSeccion = ''
 
                                        for (var i=0; i<data.length; i++){
+						var cant = (data[i].stock + data[i].cantidad);
 
                                            htmlSeccion += '<tr bgcolor="#ffe4c4">'+
-        '<td><input style="width: 95%;" type="number" onkeypress="return bloquearCampoNumber(event)" min="1" max="'+data[i].stock+'" id="editarProductoCantidad'+i+'"  value="'+data[i].cantidad+'"></td><td>'+data[i].producto+'</td><td align="right">'+data[i].precio+
+        '<td><input style="width: 95%;" type="number" onkeypress="return bloquearCampoNumber(event)" min="1" max="'+cant+'" id="editarProductoCantidad'+i+'"  value="'+data[i].cantidad+'"></td><td>'+data[i].producto+'</td><td align="right">'+data[i].precio+
                                            '</td><td align="right">'+(data[i].precio2)+'</td><td align="center"><input type="checkbox" id="editarProductoEliminar'+i+'"></td></tr>'
                                             contador = i+1;
 

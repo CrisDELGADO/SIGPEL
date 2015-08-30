@@ -216,7 +216,7 @@
                                        }
                                         var htmlD = '<div class="ventana_flotante"><h2>Detalle del Pedido</h2>'+
         '<a style="cursor: pointer;" onclick="cerrarVentanaPedidoDetalle()"><img src="{% static "images/cancel.png" %}" height="20px" align="right"></a>'+
-         '<a style="cursor: pointer;" href="/mispedidos/pedido/imprimir/'+id+'/"><img style="padding-right: 20px;" title="Imprimir" src="{% static "images/imprimir.png" %}" height="20px" align="right"></a>' +
+         '<a style="cursor: pointer;" target="_blank" href="/pedido/imprimir/'+id+'/"><img style="padding-right: 20px;" title="Imprimir" src="{% static "images/imprimir.png" %}" height="20px" align="right"></a>' +
         '<br><br> <hr> <table> <tr> <td>Código:</td><td style="padding-left: 10px;">'+e+'</td> </tr> <tr> <td>Fecha Inicio:</td>'+
          '<td style="padding-left: 10px;">'+fechaI+'</td></tr><tr><td>Fecha Fin:</td><td style="padding-left: 10px;">'+
           ''+fechaF+'</td> </tr> <tr><td>Estado:</td> <td style="padding-left: 10px;">'+estado+'</td> </tr> </table><br>'+

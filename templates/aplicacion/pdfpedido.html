@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% load static from staticfiles %}
+    <meta charset="UTF-8">
+    <link href='http://fonts.googleapis.com/css?family=Ubuntu+Condensed' rel='stylesheet' type='text/css'>
+    <link href="{% static 'css/style.css' %}" rel="stylesheet" type="text/css" media="all"/>
+    <script type="text/javascript" src="{% static 'js/Chart.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/sorttable.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery-1.9.0.min.js' %}"></script>
+    <script src="{% static 'js/jquery.openCarousel.js' %}" type="text/javascript"></script>
+    <script type="text/javascript" src="{% static 'js/easing.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/move-top.js' %}"></script>
+    <script src="{% static 'js/easyResponsiveTabs.js' %}" type="text/javascript"></script>
+    <link href="{% static 'css/easy-responsive-tabs.css' %}" rel="stylesheet" type="text/css" media="all"/>
+    <title>G&G by Blessing</title>
+</head>
+<body onload="window.print()">
+<div class="wrap">
+    <div class="preview-page">
+        <div class="contenedorMisPedidos">
+            <h1>Detalle Pedido</h1>
+            <hr>
+            <table>
+                <tr><td style="width: 20%;">Código Pedido:</td><td>{{datosPedido.id}}</td></tr>
+                <tr><td style="width: 20%;">Usuario:</td><td>{{datosUsuario.apellidos}} {{datosUsuario.nombres}}</td></tr>
+                <tr><td style="width: 20%;">Cédula:</td><td>{{datosUsuario.cedula}}</td></tr>
+                <tr><td style="width: 20%;">Fecha de Inicio:</td><td>{{datosPedido.fecha_ini}}</td></tr>
+                <tr><td style="width: 20%;">Fecha de Fin:</td><td>{{datosPedido.fecha_fin}}</td></tr>
+                <tr><td style="width: 20%;">Estado:</td><td>{{datosPedido.estado}}</td></tr>
+            </table>
+            <br><br>
+            <table class="tablaPedido">
+                <tr bgcolor="#ff7f50">
+                    <td style="width: 10%;">Cantidad</td>
+                    <td style="width: 50%;">Producto</td>
+                    <td style="width: 20%;">Precio Unit.</td>
+                    <td style="width: 20%;">Precio</td>
+                </tr>
+                {% for datos in datosTabla %}
+                    <tr bgcolor="#ffe4c4">
+                        <td>{{datos.cantidad}}</td>
+                        <td>{{datos.producto}}</td>
+                        <td align="right">{{datos.precio}}</td>
+                        <td align="right">{{datos.precio2}}</td>
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <td style="border: 0px;"></td>
+                    <td style="border: 0px;"></td>
+                    <td bgcolor="#ff7f50">Subtotal:</td>
+                    {% for datos in datosTabla|slice:":1" %}
+                    <td  bgcolor="#ffe4c4" align="right">{{datos.sub}}</td>
+                    {% endfor %}
+
+                </tr>
+                <tr>
+                    <td style="border: 0px;"></td>
+                    <td style="border: 0px;"></td>
+                    <td bgcolor="#ff7f50">IVA:</td>
+                    {% for datos in datosTabla|slice:":1" %}
+                    <td  bgcolor="#ffe4c4" align="right">{{datos.iva}}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td style="border: 0px;"></td>
+                    <td style="border: 0px;"></td>
+                    <td bgcolor="#ff7f50">Total:</td>
+                    {% for datos in datosTabla|slice:":1" %}
+                    <td  bgcolor="#ffe4c4" align="right">{{datos.total}}</td>
+                    {% endfor %}
+                </tr>
+            </table>
+
+        </div>
+    </div>
+</div>
+</body>
+</html>

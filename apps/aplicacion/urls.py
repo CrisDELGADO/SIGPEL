@@ -30,6 +30,9 @@ urlpatterns = patterns('',
     url(r'^mispedidos/pedido/cancelar/$',vista_pedidoDetalleCancelar.as_view()),
     url(r'^mispedidos/pedido/imprimir/(?P<idPedido>.*)/$',imprimirPedido, name='imprimirPedido'),
 
+    url(r'^pedido/imprimir/(?P<idPedido>.*)/$',imprimirPedido2, name='imprimirPedido2'),
+    url(r'^reporte/imprimir/(?P<reporte>.*)/(?P<anio>.*)/(?P<mes>.*)/$',imprimirReporte),
+
     url(r'^gestionarpedidos/$',vista_gestionarpedidos),
     url(r'^gestionarpedidos/pedidosCedula/$',vista_gestionar_VerPedidos.as_view()),
     url(r'^gestionarpedidos/validarPedido/$',vista_gestionar_ValidarPedido.as_view()),
